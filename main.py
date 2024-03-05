@@ -25,7 +25,7 @@ async def developer(desarrollador:str):
         dta =df_developer[df_developer['developer'] == desarrollador]
     
         for año, grupo in dta.groupby('Año'):
-            total_items 0 len(grupo)
+            total_items = len(grupo)
             juegos_gratis = len(grupo[grupo['price'] == 0.0])
             porcentaje_gratis = (juegos_gratis/total_items) *100 if total_items >0 else 0
     
