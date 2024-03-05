@@ -10,7 +10,11 @@ app = FastAPI()
 #http://127.0.0.1:8000
 
 #abrimos los archivos en una variable para su manejo en las funciones
-df_final = pd.read_parquet('Df_final.parquet')
+df_developer = pd.read_parquet('df_developer.parquet')
+df_userdta = pd.read_parquet('userdata.parquet')
+df_gen = pd.read_parquet('userforgenre.parquet')
+df_bestdev = pd.read_parquet('bestdeveloper.parquet')
+df_devreview = pd.read_parquet('devereview.parquet')
 model = pd.read_parquet('model_render.parquet')
 
 @app.get("/")
@@ -23,12 +27,12 @@ async def developer(desarrollador:str):
 
     try:
    
-        dta = df_final[df_final['developer'] == desarrollador]
+        dta =df_developer[df_developer['developer'] == desarrollador]
 
         gruop_anio= dta.groupby('Año')['item_id'].count()
         free = dta[dta['price']==0.0].groupby('Año')['item_id'].count()
         free_porcentaje = (free/gruop_anio*100).fillna(0).astype(int)
-        del free
+        del free, dta
         retorno ={}
         for i in range(len(gruop_anio.index)):
             retorno['Año_'+ str(gruop_anio.index[i])] =(
@@ -48,18 +52,18 @@ async def userdata(user_id:str):
 
     try:
 
-        data = df_final[df_final['user_id'] == user_id]
+        data = df_userdta[df_userdta['user_id'] == user_id]
 
         if data.empty:
             return {'Error': f"No se encontraron datos para el usuario don id{user_id}"}
        
         gastado = data['price'].sum()
         #recomendacion = df_final[df_final['user_id'] ==user_id]['recommend'].sum()
-        total_recom= len(df_final[df_final['user_id'] == user_id])
-        porcentaje = (total_recom/len(df_final['user_id'].unique()))*100
+        total_recom= len(df_userdta[df_userdta['user_id'] == user_id])
+        porcentaje = (total_recom/len(df_userdta['user_id'].unique()))*100
 
         cont = data['items_count'].iloc[0]
-        
+        del data
         return [
             {'Cantidad de dinero gastado por el usuario': float(gastado)},
             {'Porcentaje de recomendacion por el usuario': round(float(porcentaje),3)},
@@ -77,7 +81,7 @@ async def userdata(user_id:str):
 async def UserforGenre(genero:str):
 
     try:
-        df_genero = df_final[['genres','user_id','Año', 'playtime_forever']]
+        df_genero = df_gen[['genres','user_id','Año', 'playtime_forever']]
         filtro = df_genero[df_genero['genres'] == genero]
         playtime_sum = filtro.groupby(['user_id','Año'])['playtime_forever'].sum()
         user_maxplay = playtime_sum.groupby('user_id').sum().idxmax()
@@ -96,7 +100,7 @@ async def UserforGenre(genero:str):
 
 async def best_developer_year(año:int):
 
-    reviesxgames = df_final[['developer','Año', 'recommend','sentiment_analysis']]
+    reviesxgames = df_bestdev[['developer','Año', 'recommend','sentiment_analysis']]
 
     filtro = reviesxgames[(reviesxgames['Año'] == año) & (reviesxgames['recommend'] == True) & (reviesxgames['sentiment_analysis'] == 2)]
     positive= filtro['developer'].value_counts()
@@ -113,7 +117,7 @@ async def best_developer_year(año:int):
 
 async def developer_review_analysis(desarrolladora:str):
 
-    reviewxgame = df_final[['developer','sentiment_analysis']]
+    reviewxgame = df_devreview[['developer','sentiment_analysis']]
     filtro = reviewxgame[reviewxgame['developer'] == desarrolladora]
     sentiment = filtro['sentiment_analysis'].value_counts().to_dict()
     resultado = {desarrolladora: ['Negative= ' + str(sentiment.get(0,0)), 'Neutral =' + str(sentiment.get(1,0)), 'Positive = ' +str(sentiment.get(2,0))]}
