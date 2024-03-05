@@ -11,11 +11,11 @@ app = FastAPI()
 
 #abrimos los archivos en una variable para su manejo en las funciones
 df_developer = pd.read_parquet('df_developer.parquet')
-df_userdta = pd.read_parquet('userdata.parquet')
-df_gen = pd.read_parquet('userforgenre.parquet')
-df_bestdev = pd.read_parquet('bestdeveloper.parquet')
-df_devreview = pd.read_parquet('devereview.parquet')
-model = pd.read_parquet('model_render.parquet')
+#df_userdta = pd.read_parquet('userdata.parquet')
+#df_gen = pd.read_parquet('userforgenre.parquet')
+#df_bestdev = pd.read_parquet('bestdeveloper.parquet')
+#df_devreview = pd.read_parquet('devereview.parquet')
+#model = pd.read_parquet('model_render.parquet')
 
 @app.get("/")
 async def index():
@@ -47,7 +47,7 @@ async def developer(desarrollador:str):
 #Devuelve la cantidad de dinero gastado para el usuario el porcentaje de recomendación
 #en base a reviews recomend y la cantidad de items
 
-@app.get('/UserID/{Usuario}')
+"""@app.get('/UserID/{Usuario}')
 async def userdata(user_id:str):
 
     try:
@@ -153,4 +153,4 @@ async def recomendacion_games(item_id:int):
 
     sim_game_name = df_muestra['app_name'].iloc[sim_gam_ind].tolist()
 
-    return{'Similar games': sim_game_name}
+    return{'Similar games': sim_game_name}"""
