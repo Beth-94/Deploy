@@ -20,25 +20,27 @@ async def index():
 @app.get('/Developer/{desarrollador}')
 async def developer(desarrollador:str):
 
-    try:
-   
-        dta =df_developer[df_developer['developer'] == desarrollador]
-
-        gruop_anio= dta.groupby('Año')['item_id'].count()
-        free = dta[dta['price']==0.0].groupby('Año')['item_id'].count()
-        free_porcentaje = (free/gruop_anio*100).fillna(0).astype(int)
-        del free, dta
-        retorno ={}
-        for i in range(len(gruop_anio.index)):
-            retorno['Año_'+ str(gruop_anio.index[i])] =(
-                ' Cantidad de items por año:' + str(gruop_anio.values[i])+ 
-                '- Porcentaje de juegos gratis:' + str(free_porcentaje.values[i])
-                )
-
-        return retorno
-    except Exception as e:
-        return{'Error': str(e)}
+    try;
     
+        dta =df_developer[df_developer['developer'] == desarrollador]
+    
+        for año, grupo in dta.groupby('Año'):
+            total_items 0 len(grupo)
+            juegos_gratis = len(grupo[grupo['price'] == 0.0])
+            porcentaje_gratis = (juegos_gratis/total_items) *100 if total_items >0 else 0
+    
+            #devolvemos el resultado para el año dado
+            yield {
+                'Año': año,
+                'Cantidad de items': total_items,
+                'Porcentaje de juegos gratis': porcentaje_gratis
+            }
+
+    except Exception as e:
+        #manejo de errores
+        yield {'Error': str(e)}
+        
+
 #Devuelve la cantidad de dinero gastado para el usuario el porcentaje de recomendación
 #en base a reviews recomend y la cantidad de items
 
