@@ -28,7 +28,7 @@ async def developer(desarrollador:str):
         gruop_anio= dta.groupby('Año')['item_id'].count()
         free = dta[dta['price']==0.0].groupby('Año')['item_id'].count()
         free_porcentaje = (free/gruop_anio*100).fillna(0).astype(int)
-        del free
+        del free, dta
         retorno ={}
         for i in range(len(gruop_anio.index)):
             retorno['Año_'+ str(gruop_anio.index[i])] =(
@@ -59,7 +59,7 @@ async def userdata(user_id:str):
         porcentaje = (total_recom/len(df_final['user_id'].unique()))*100
 
         cont = data['items_count'].iloc[0]
-        
+        del data, total_recom
         return [
             {'Cantidad de dinero gastado por el usuario': float(gastado)},
             {'Porcentaje de recomendacion por el usuario': round(float(porcentaje),3)},
@@ -148,5 +148,5 @@ async def recomendacion_games(item_id:int):
     sim_gam_ind = [i[0] for i in sim_juegos[:5]]
 
     sim_game_name = df_muestra['app_name'].iloc[sim_gam_ind].tolist()
-
+    del juego, indice, df_muestra, sim_score, sim_juegos
     return{'Similar games': sim_game_name}
