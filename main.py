@@ -20,7 +20,7 @@ async def index():
 @app.get('/Developer/{desarrollador}')
 async def developer(desarrollador:str):
 
-    try;
+    try:
     
         dta =df_developer[df_developer['developer'] == desarrollador]
     
